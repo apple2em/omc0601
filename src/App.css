@@ -47,6 +47,24 @@ h1 {
   opacity: 0.6;
 }
 
+.date-input {
+  padding: 0 12px;
+  font-size: 13px;
+  font-family: var(--sans);
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border);
+  outline: none;
+  cursor: pointer;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.date-input:focus {
+  color: var(--text-h);
+}
+
 .add-btn {
   padding: 0 20px;
   font-size: 15px;
@@ -93,8 +111,15 @@ h1 {
   cursor: pointer;
 }
 
-.todo-text {
+.todo-body {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.todo-text {
   font-size: 17px;
   color: var(--text-h);
   word-break: break-word;
@@ -105,6 +130,23 @@ h1 {
   text-decoration: line-through;
   color: var(--text);
   opacity: 0.6;
+}
+
+.due-badge {
+  font-size: 12px;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.due-badge.overdue {
+  color: #ef4444;
+  opacity: 1;
+  font-weight: 500;
+}
+
+.todo-item.overdue {
+  border-left: 3px solid #ef4444;
+  padding-left: 17px;
 }
 
 .delete-btn {

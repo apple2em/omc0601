@@ -7,6 +7,23 @@ interface Todo {
   id: number
   text: string
   completed: boolean
+  dueDate?: string // ISO date string YYYY-MM-DD
+}
+
+function formatDue(dueDate: string): string {
+  const today = new Date().toISOString().slice(0, 10)
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10)
+  if (dueDate === today) return 'Today'
+  if (dueDate === tomorrow) return 'Tomorrow'
+  return new Date(dueDate + 'T00:00:00').toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+function isOverdue(dueDate: string, completed: boolean): boolean {
+  if (completed) return false
+  return dueDate < new Date().toISOString().slice(0, 10)
 }
 
 function App() {
@@ -18,6 +35,7 @@ function App() {
     }
   })
   const [input, setInput] = useState('')
+  const [dueDate, setDueDate] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -28,8 +46,12 @@ function App() {
   function addTodo() {
     const text = input.trim()
     if (!text) return
-    setTodos(prev => [...prev, { id: Date.now(), text, completed: false }])
+    setTodos(prev => [
+      ...prev,
+      { id: Date.now(), text, completed: false, dueDate: dueDate || undefined },
+    ])
     setInput('')
+    setDueDate('')
     inputRef.current?.focus()
   }
 
@@ -55,6 +77,7 @@ function App() {
 
   const activeCount = todos.filter(t => !t.completed).length
   const hasCompleted = todos.some(t => t.completed)
+  const today = new Date().toISOString().slice(0, 10)
 
   return (
     <div className="app">
@@ -72,6 +95,14 @@ function App() {
             onKeyDown={e => e.key === 'Enter' && addTodo()}
             autoFocus
           />
+          <input
+            className="date-input"
+            type="date"
+            value={dueDate}
+            min={today}
+            onChange={e => setDueDate(e.target.value)}
+            aria-label="Due date"
+          />
           <button className="add-btn" onClick={addTodo} aria-label="Add todo">
             Add
           </button>
@@ -80,25 +111,42 @@ function App() {
         {todos.length > 0 && (
           <>
             <ul className="todo-list">
-              {filtered.map(todo => (
-                <li key={todo.id} className={`todo-item${todo.completed ? ' completed' : ''}`}>
-                  <input
-                    type="checkbox"
-                    className="todo-check"
-                    checked={todo.completed}
-                    onChange={() => toggleTodo(todo.id)}
-                    aria-label={`Mark "${todo.text}" as ${todo.completed ? 'active' : 'complete'}`}
-                  />
-                  <span className="todo-text">{todo.text}</span>
-                  <button
-                    className="delete-btn"
-                    onClick={() => deleteTodo(todo.id)}
-                    aria-label={`Delete "${todo.text}"`}
+              {filtered.map(todo => {
+                const overdue = todo.dueDate ? isOverdue(todo.dueDate, todo.completed) : false
+                return (
+                  <li
+                    key={todo.id}
+                    className={[
+                      'todo-item',
+                      todo.completed ? 'completed' : '',
+                      overdue ? 'overdue' : '',
+                    ].filter(Boolean).join(' ')}
                   >
-                    ×
-                  </button>
-                </li>
-              ))}
+                    <input
+                      type="checkbox"
+                      className="todo-check"
+                      checked={todo.completed}
+                      onChange={() => toggleTodo(todo.id)}
+                      aria-label={`Mark "${todo.text}" as ${todo.completed ? 'active' : 'complete'}`}
+                    />
+                    <span className="todo-body">
+                      <span className="todo-text">{todo.text}</span>
+                      {todo.dueDate && (
+                        <span className={`due-badge${overdue ? ' overdue' : ''}`}>
+                          {overdue ? '⚠ ' : ''}{formatDue(todo.dueDate)}
+                        </span>
+                      )}
+                    </span>
+                    <button
+                      className="delete-btn"
+                      onClick={() => deleteTodo(todo.id)}
+                      aria-label={`Delete "${todo.text}"`}
+                    >
+                      ×
+                    </button>
+                  </li>
+                )
+              })}
             </ul>
 
             <div className="footer">
