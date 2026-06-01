@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(ls \"$env:USERPROFILE\\\\.claude\\\\plugins\\\\marketplaces\" -ErrorAction SilentlyContinue)",
+      "PowerShell(ls \"$env:USERPROFILE\\\\.claude\\\\plugins\\\\marketplaces\\\\omc\" -ErrorAction SilentlyContinue)",
+      "PowerShell(ls \"$env:USERPROFILE\\\\.claude\\\\plugins\\\\marketplaces\\\\omc\\\\skills\" -ErrorAction SilentlyContinue)",
+      "PowerShell(ls \"$env:USERPROFILE\\\\.claude\\\\plugins\\\\marketplaces\\\\omc\\\\skills\\\\omc-setup\")",
+      "PowerShell(ls \"$env:USERPROFILE\\\\.claude\\\\plugins\\\\cache\" -ErrorAction SilentlyContinue || echo \"No cache directory\")",
+      "Bash(command -v ruby)",
+      "Bash(ruby --version)",
+      "Bash(echo \"Ruby detected: $\\(ruby --version)",
+      "Bash(node *)",
+      "Bash(npm install *)",
+      "Bash(command -v omc)",
+      "Bash(omc --version)",
+      "Bash(echo \"Verified: omc $\\(omc --version)",
+      "Bash(grep -q oh-my-claudecode __TRACKED_VAR__/.claude/settings.json)",
+      "Bash(claude mcp *)",
+      "Bash(gh auth *)",
+      "Bash(gh api *)",
+      "Bash(npm create *)",
+      "Bash(npx tsc *)",
+      "PowerShell(Start-Process \"http://localhost:5173\")",
+      "Bash(curl -sf http://localhost:5173)",
+      "Bash(git *)"
+    ]
+  }
+}
